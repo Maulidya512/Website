@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartNoteify - Catatan & Flashcard SMA</title>
+    <!-- Tailwind CSS CDN untuk styling cepat & estetik -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .perspective { perspective: 1000px; }
+        .transform-style { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 class="text-xl font-bold tracking-wide">💡 SmartNoteify <span class="text-xs bg-indigo-500 py-1 px-2 rounded-full">Startup Prototype</span></h1>
+        <nav class="space-x-4 text-sm font-medium">
+            <button onclick="switchTab('notes')" id="btn-notes" class="hover:underline focus:outline-none">Catatan</button>
+            <button onclick="switchTab('flashcards')" id="btn-flashcards" class="hover:underline focus:outline-none">Flashcards</button>
+            <button onclick="switchTab('business')" id="btn-business" class="hover:underline focus:outline-none">Model Bisnis</button>
+        </nav>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main class="flex-grow container mx-auto p-4 max-w-4xl">
+
+        <!-- TAB 1: CATATAN DIGITAL -->
+        <section id="tab-notes" class="space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-semibold mb-3 text-indigo-600">Buat Catatan Baru</h2>
+                <form id="noteForm" class="space-y-3">
+                    <input type="text" id="noteTitle" placeholder="Judul Materi (Contoh: Rumus Turunan Matematika)" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none" required>
+                    <select id="noteCategory" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none">
+                        <option value="Matematika">Matematika</option>
+                        <option value="Fisika/Kimia">Fisika / Kimia</option>
+                        <option value="Sosiologi/Sejarah">Sosiologi / Sejarah</option>
+                        <option value="Bahasa">Bahasa</option>
+                    </select>
+                    <textarea id="noteContent" placeholder="Tulis ringkasan materi di sini..." rows="3" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none" required></textarea>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">Simpan Catatan</button>
+                </form>
+            </div>
+
+            <!-- Daftar Catatan -->
+            <div>
+                <h3 class="font-semibold text-slate-700 mb-3">Daftar Catatan Tersimpan</h3>
+                <div id="notesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Data akan dirender lewat JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: FLASHCARDS -->
+        <section id="tab-flashcards" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
+                <h2 class="text-lg font-semibold mb-2 text-indigo-600">Latihan Hafalan Cepat</h2>
+                <p class="text-sm text-slate-500 mb-4">Klik kartu di bawah untuk melihat jawaban/penjelasan di baliknya.</p>
+                
+                <!-- Kartu Flip 3D -->
+                <div onclick="this.querySelector('.card-inner').classList.toggle('rotate-y-180')" class="perspective w-full h-48 cursor-pointer max-w-md mx-auto">
+                    <div class="card-inner relative w-full h-full duration-500 transform-style shadow-lg rounded-xl">
+                        <!-- Sisi Depan -->
+                        <div class="absolute inset-0 bg-indigo-50 border-2 border-indigo-200 rounded-xl flex flex-col items-center justify-center p-6 backface-hidden">
+                            <span class="text-xs font-bold text-indigo-500 uppercase mb-2">Pertanyaan / Istilah</span>
+                            <p id="flashQuestion" class="text-lg font-medium text-slate-700">Apa rumus laju reaksi kimia?</p>
+                        </div>
+                        <!-- Sisi Belakang -->
+                        <div class="absolute inset-0 bg-indigo-600 text-white rounded-xl flex flex-col items-center justify-center p-6 backface-hidden rotate-y-180">
+                            <span class="text-xs font-bold text-indigo-200 uppercase mb-2">Jawaban</span>
+                            <p id="flashAnswer" class="text-lg font-medium">v = Δ[M]/Δt (Perubahan konsentrasi per satuan waktu)</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="nextCard()" class="mt-4 bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 text-sm font-medium">Ganti Kartu Lain</button>
+            </div>
+        </section>
+
+        <!-- TAB 3: MODEL BISNIS -->
+        <section id="tab-business" class="hidden space-y-4">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-semibold mb-3 text-indigo-600">Pitching Model Bisnis Startup</h2>
+                <ul class="space-y-3 text-sm text-slate-600 list-disc list-inside">
+                    <li><strong>Value Proposition:</strong> Menghemat waktu belajar siswa SMA kelas 11 dengan ringkasan cepat dan latihan hafalan interaktif.</li>
+                    <li><strong>Target Pasar:</strong> Siswa SMA/SMK seluruh Indonesia yang membutuhkan bahan belajar praktis menjelang ujian.</li>
+                    <li><strong>Strategi Monetisasi:</strong> Penjualan *Template Ringkasan Premium* (format JSON) dan penempatan sponsor mikro di bagian bawah web.</li>
+                    <li><strong>Kelebihan Teknologi:</strong> Dibangun murni dengan HTML, CSS, JavaScript (Ringan, tanpa server mahal, bisa di-hosting gratis via GitHub Pages).</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-4 text-xs text-slate-400 border-t mt-auto">
+        &copy; 2026 SmartNoteify. Dibuat untuk Tugas TIK & Proyek Startup Siswa SMA.
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Navigasi Tab
+        function switchTab(tabId) {
+            document.getElementById('tab-notes').classList.add('hidden');
+            document.getElementById('tab-flashcards').classList.add('hidden');
+            document.getElementById('tab-business').classList.add('hidden');
+            
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+        }
+
+        // Logika Catatan dengan LocalStorage
+        let notes = JSON.parse(localStorage.getItem('smartnotes')) || [
+            {title: "Teori Stratifikasi Sosial", category: "Sosiologi/Sejarah", content: "Penggolongan masyarakat ke dalam kelas-kelas secara bertingkat."},
+            {title: "Hukum Newton II", category: "Fisika/Kimia", content: "Percepatan dari suatu objek berbanding lurus dengan gaya total yang bekerja padanya."}
+        ];
+
+        const noteForm = document.getElementById('noteForm');
+        const notesContainer = document.getElementById('notesContainer');
+
+        function renderNotes() {
+            notesContainer.innerHTML = '';
+            notes.forEach((note, index) => {
+                notesContainer.innerHTML += `
+                    bg-white p-4 rounded-xl border border-slate-100 shadow-sm relative space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs bg-indigo-50 text-indigo-600 font-semibold px-2 py-1 rounded">${note.category}</span>
+                            <button onclick="deleteNote(${index})" class="text-red-400 hover:text-red-600 text-xs">Hapus</button>
+                        </div>
+                        <h4 class="font-bold text-slate-800">${note.title}</h4>
+                        <p class="text-sm text-slate-600">${note.content}</p>
+                    </div>
+                `;
+            });
+        }
+
+        noteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newNote = {
+                title: document.getElementById('noteTitle').value,
+                category: document.getElementById('noteCategory').value,
+                content: document.getElementById('noteContent').value
+            };
+            notes.push(newNote);
+            localStorage.setItem('smartnotes', JSON.stringify(notes));
+            renderNotes();
+            noteForm.reset();
+        });
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            localStorage.setItem('smartnotes', JSON.stringify(notes));
+            renderNotes();
+        }
+
+        // Logika Sederhana Flashcard Rotasi
+        const flashData = [
+            {q: "Apa rumus laju reaksi kimia?", a: "v = Δ[M]/Δt"},
+            {q: "Sebutkan 3 unsur stratifikasi sosial!", a: "Kekayaan, Kekuasaan, dan Kehormatan."},
+            {q: "Apa fungsi utama sel darah merah (Eritrosit)?", a: "Mengangkut oksigen dari paru-paru ke seluruh tubuh."}
+        ];
+        let currentFlashIndex = 0;
+
+        function nextCard() {
+            currentFlashIndex = (currentFlashIndex + 1) % flashData.length;
+            document.getElementById('flashQuestion').innerText = flashData[currentFlashIndex].q;
+            document.getElementById('flashAnswer').innerText = flashData[currentFlashIndex].a;
+        }
+
+        // Inisialisasi awal
+        renderNotes();
+    </script>
+</body>
+</html>
